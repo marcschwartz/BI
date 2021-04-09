@@ -1,0 +1,2 @@
+export(BI)
+importFrom("stats", "addmargins", "qnorm")
