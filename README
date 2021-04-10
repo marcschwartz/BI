@@ -14,7 +14,7 @@ Description: Generate James (1996) and Bang (2004) Blinding Indices to assess wh
              which treatment arm (e.g. placebo or treatment) subjects were assigned at 
              randomization. 
 
-License: This package is licensed under GPL version 3. See the LICENSE file.
+License: This package is licensed under GPL version 3. See the GPL-3 file.
 
 Authors: Marc Schwartz and Nate Mercaldo
 
