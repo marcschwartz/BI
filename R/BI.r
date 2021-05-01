@@ -2,7 +2,7 @@
 ## BI.r
 ## Blinding Assessment Indices for Randomized, Controlled, Clinical Trials
 
-## Copyright 2010 - 2020: Original R Code by Nate Mercaldo (nmercaldo@mgh.harvard.edu)
+## Copyright 2010 - 2020: Original 2010 R Code by Nate Mercaldo (nmercaldo@mgh.harvard.edu)
 ## Copyright 2021: Updates by Marc Schwartz (marc_schwartz@me.com)
 
 ## This software is distributed under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
 
 
 BI <- function(x, weights = NULL, conf.level = 0.95,
-               alternative.J = c("two.sided", "one.sided"),
-               alternative.B = c("one.sided", "two.sided"),
+               alternative.J = c("two.sided", "less", "greater"),
+               alternative.B = c("two.sided", "less", "greater"),
                group.names = c("Treatment", "Placebo")) {
 
   
@@ -69,7 +69,10 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
   if (alternative.J == "two.sided") {
     alpha.J <- (1 - conf.level) / 2
     Sided.J <- "2-Sided"
-  } else {
+  } else if (alternative.J == "less") {
+    alpha.J <- 1 - conf.level
+    Sided.J <- "1-Sided"
+  } else if (alternative.J == "greater") {
     alpha.J <- 1 - conf.level
     Sided.J <- "1-Sided"
   }
@@ -77,7 +80,10 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
   if (alternative.B == "two.sided") {
     alpha.B <- (1 - conf.level) / 2
     Sided.B <- "2-Sided"
-  } else {
+  } else if (alternative.B == "less") {
+    alpha.B <- 1 - conf.level
+    Sided.B <- "1-Sided"
+  } else if (alternative.B == "greater") {
     alpha.B <- 1 - conf.level
     Sided.B <- "1-Sided"
   }
@@ -85,7 +91,8 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
   CI.J <- qnorm(alpha.J, lower.tail = FALSE)
   CI.B <- qnorm(alpha.B, lower.tail = FALSE)
 
-
+  
+  #########################################################################################
   ## Compute James' Blinding Index
   ## Use 'x' here
   x1 <- addmargins(x)
@@ -140,12 +147,24 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
   
   BI.se <- sqrt(v)
 
-  BI.James <- matrix(c(BI.est, BI.se, BI.est - (CI.J * BI.se), BI.est + (CI.J * BI.se)),
+  if (alternative.J == "two.sided") {
+    BI.CI.Lower <- BI.est - (CI.J * BI.se)
+    BI.CI.Upper <- BI.est + (CI.J * BI.se)
+  } else if (alternative.J == "less") {
+    BI.CI.Lower <- 0
+    BI.CI.Upper <- BI.est + (CI.J * BI.se)
+  } else if (alternative.J == "greater") {
+    BI.CI.Lower <- BI.est - (CI.J * BI.se)
+    BI.CI.Upper <- 1
+  }
+
+  BI.James <- matrix(c(BI.est, BI.se,
+                       BI.CI.Lower,
+                       BI.CI.Upper),
                      nrow = 1)
   
  
-  
-
+  #########################################################################################
   ## Compute Bang Blinding Index
   ## Use t(x) here
   x2 <- addmargins(t(x))
@@ -163,14 +182,30 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
                      (x2[i, 2] / x2[i, ncol(x2)]) * (1 - (x2[i, 2] / x2[i, ncol(x2)])) +
                      2 * (x2[i, 1] / x2[i, ncol(x2)]) * (x2[i, 2] / x2[i, ncol(x2)])) / x2[i, ncol(x2)])
   }
+
+  if (alternative.B == "two.sided") {
+    BI.CI.Lower <- BI.est - (CI.B * BI.se)
+    BI.CI.Upper <- BI.est + (CI.B * BI.se)
+  } else if (alternative.B == "less") {
+    BI.CI.Lower <- c(-1, -1)
+    BI.CI.Upper <- BI.est + (CI.B * BI.se)
+  } else if (alternative.B == "greater") {
+    BI.CI.Lower <- BI.est - (CI.B * BI.se)
+    BI.CI.Upper <- c(1, 1)
+  }
+  
   
   BI.Bang <- matrix(c(BI.est,
                       BI.se,
-                      BI.est - (CI.B * BI.se),
-                      BI.est + (CI.B * BI.se)),
+                      BI.CI.Lower,
+                      BI.CI.Upper),
                      nrow = 2)
 
 
+  
+  #########################################################################################
+  ## Format for output
+  
   rownames(BI.James) <- "Overall"
   
   colnames(BI.James) <- c("Estimate", "Std. Error",
@@ -189,4 +224,3 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
   ## Return list
   BI
 }
-
