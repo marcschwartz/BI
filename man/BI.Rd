@@ -1,7 +1,7 @@
 \name{BI}
 \alias{BI}
 \title{Blinding Indices for Randomized, Controlled, Clinical Trials}
-\description{Generate James (1996) and Bang (2004) Blinding Indices to assess whether or not satisfactory blinding has been 
+\description{Generate James (1996) and Bang (2004) Blinding Indexes to assess whether or not satisfactory blinding has been 
              maintained in a randomized, controlled, clinical trial. These can be generated for trial subjects, research
              coordinators (RCs) and principal investigators (PIs), based upon standardized questionnaires that have
              been administered, to assess whether or not they can correctly guess to which treatment arm (e.g. placebo or treatment)

@@ -6,13 +6,15 @@ GitHub URL: https://github.com/marcschwartz/BI
 
 Title: Blinding Assessment Indexes for Randomized, Controlled, Clinical Trials
 
-Description: Generate James Blinding Index (1996) and Bang Blinding Index (2004) measures 
-             to assess whether or not satisfactory blinding has been maintained in a 
-             randomized, controlled, clinical trial. These can be generated for trial 
-             subjects, research coordinators and principal investigators, based upon 
-             standardized questionnaires that have been administered, to assess whether 
-             or not they can correctly guess to which treatment arm (e.g. placebo or 
-             treatment) subjects were assigned at randomization. 
+Description: Generate the James Blinding Index, as described in James et al (1996) 
+             <https://pubmed.ncbi.nlm.nih.gov/8841652/> and the Bang Blinding Index, 
+             as described in Bang et al (2004) <https://pubmed.ncbi.nlm.nih.gov/15020033/>.
+             These are measures to assess whether or not satisfactory blinding has been 
+             maintained in a randomized, controlled, clinical trial. These can be generated 
+             for trial subjects, research coordinators and principal investigators, based 
+             upon standardized questionnaires that have been administered, to assess whether
+             or not they can correctly guess to which treatment arm (e.g. placebo or treatment) 
+             subjects were assigned at randomization. 
 
 License: This package is licensed under GPL version 3. See the GPL-3 file.
 
