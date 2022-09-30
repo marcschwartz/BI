@@ -3,7 +3,7 @@
 ## Blinding Assessment Indices for Randomized, Controlled, Clinical Trials
 
 ## Copyright 2010 - 2020: Original 2010 R Code by Nate Mercaldo (nmercaldo@mgh.harvard.edu)
-## Copyright 2021: Updates by Marc Schwartz (marc_schwartz@me.com)
+## Copyright 2021 - 2022: Updates by Marc Schwartz (marc_schwartz@me.com)
 
 ## This software is distributed under the terms of the GNU General Public License
 ## Version 3, June 2007.

@@ -21,7 +21,7 @@ License: This package is licensed under GPL version 3. See the GPL-3 file.
 Authors: Marc Schwartz and Nate Mercaldo
 
 Copyright 2010 - 2020: Original 2010 R Code by Nate Mercaldo (nmercaldo@mgh.harvard.edu)
-Copyright 2021: Updates by Marc Schwartz (marc_schwartz@me.com)
+Copyright 2021 - 2022: Updates by Marc Schwartz (marc_schwartz@me.com)
 
 If you wish to install this package directly from this GitHub repository, as opposed
 to installing from CRAN, install the "devtools" package and use the following command:

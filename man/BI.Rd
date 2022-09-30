@@ -61,6 +61,12 @@
   to avoid potential confusion in the output, the reader will most commonly want to use the appropriate one-sided alternative for the Bang Index.
   In the case of one-sided confidence intervals, the non-relevant boundary will be fixed to the relevant extreme value of the index. In the case of the
   James BI, it will be 0 or 1, and in the case of the Bang BI, it will be -1 or 1.
+
+  IMPORTANT: In the unlikely event, when all of the responses to the blinding assessment questionnaire, for one or both treatment arms,
+  are Do Not Know, the blinding index values for the James Index are undefined (output will be NaN), while the Bang Index values
+  for the relevant treatment arm are undefined (NaN). If the only responses for both arms are Do Not Know, then the values for the
+  James Index, and the Bang Index values for both treatment arms, are undefined (NaN). While the Do Not Know responses may represent that there
+  is no information to bias the treatment guess by the respondent, it may be indicative of other dynamics that should be assessed. 
 }
 \author{
   Marc Schwartz \email{marc_schwartz@me.com} and 

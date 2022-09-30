@@ -1,6 +1,6 @@
 Package: BI
-Version: 1.0.0
-Date: 2021-05-03
+Version: 1.1.0
+Date: 2022-09-30
 Title: Blinding Assessment Indexes for Randomized, Controlled, Clinical Trials
 Description: Generate the James Blinding Index, as described in James et al (1996) 
              <https://pubmed.ncbi.nlm.nih.gov/8841652/> and the Bang Blinding Index, 
