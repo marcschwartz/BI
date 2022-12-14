@@ -56,17 +56,21 @@
   \item{BangBI}{The Bang Index result is a 2 x 4 matrix containing the per arm index estimates, standard errors, lower and upper limits of the confidence intervals.}
 }
 \note{
-  IMPORTANT: Per Bang et al 2004, there is a preference for using one-sided confidence intervals for the Bang Index, whereas the James Index
+  IMPORTANT: Per Bang (2004), there is a preference for using one-sided confidence intervals for the Bang Index, whereas the James Index
   uses two-sided confidence intervals. Thus, while the default values for \code{alternative.J} and \code{alternative.B} are both \code{two.sided}
   to avoid potential confusion in the output, the reader will most commonly want to use the appropriate one-sided alternative for the Bang Index.
   In the case of one-sided confidence intervals, the non-relevant boundary will be fixed to the relevant extreme value of the index. In the case of the
   James BI, it will be 0 or 1, and in the case of the Bang BI, it will be -1 or 1.
 
-  IMPORTANT: In the unlikely event, when all of the responses to the blinding assessment questionnaire, for one or both treatment arms,
-  are Do Not Know, the blinding index values for the James Index are undefined (output will be NaN), while the Bang Index values
-  for the relevant treatment arm are undefined (NaN). If the only responses for both arms are Do Not Know, then the values for the
-  James Index, and the Bang Index values for both treatment arms, are undefined (NaN). While the Do Not Know responses may represent that there
-  is no information to bias the treatment guess by the respondent, it may be indicative of other dynamics that should be assessed. 
+  There is an edge case for the James Index only, per James (1996) page 1425, and cited in Bang (2004) page 146, where the only positive (>0) counts in both arms are for Do Not Know.
+  That is, the two (2) counts for the correct responses and the two (2) counts incorrect responses are all 0 (\code{all(x[1:2, ] == 0)}), while both counts for Do Not Know
+  are positive (\code{all(x[3, ] > 0)}). In this case, the James Index is set to 1, the standard error is set to 0 and the confidence intervals are set accordingly.
+
+  There are other cases where the James Index and/or the Bang Index (for one or both arms) will be mathematically undefinable (NaN) and the
+  output will reflect this. This will generally occur when divide by 0 scenarios are present for the internal calculations of each index.
+  The specific details of each scenario can depend upon, for example, whether the default weights for the James Index are being used.
+  In the case of the James Index, this will generally occur when the internal Kappa calculation cannot be performed due to a 0 value for \code{Pde} in the denominator. 
+  In the case of the Bang Index, this will generally occur, for example, when the only positve counts present are for Do Not Know in one or both arms.
 }
 \author{
   Marc Schwartz \email{marc_schwartz@me.com} and 

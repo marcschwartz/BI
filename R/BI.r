@@ -54,7 +54,7 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
   ## and must match the above structure 1:1 for the count matrix 'x'
   if (is.null(weights)) {
     weights <- matrix(c(0, 0.5, 0.5, 0, 1, 1), nrow = 3, ncol = 2, byrow = TRUE)
-  } else if (!identical(dim(x), c(3L, 2L))) {
+  } else if (!identical(dim(weights), c(3L, 2L))) {
     stop("'weights' must be a 3 row by 2 column numeric matrix specifying alternative James weights for each cell in 'x'.")
   }
 
@@ -95,57 +95,72 @@ BI <- function(x, weights = NULL, conf.level = 0.95,
   #########################################################################################
   ## Compute James' Blinding Index
   ## Use 'x' here
-  x1 <- addmargins(x)
-  
-  P <- x1 / max(x1)
-  
-  Pdk <- P[nrow(P) - 1, ncol(P)]
-  
-  Pdo <- Pde <- v <- term1.denom <- 0
-  
-  for (i in 1:(nrow(P) - 2)) {
+
+  ## First, need to check for the edge case, where all positive (>0) counts in both arms are DK only,
+  ## The correct and incorrect counts for each arm are 0s.
+  ## Based upon the James 1996 paper and the Bang 2004 paper, this results in a
+  ## fixed James index of 1, with an SE of 0. If this is the case, then skip the
+  ## index code below and set fixed values for BI.est and BI.se
+
+  if (all(x[1:2, ] == 0) & all(x[3, ] > 0)) {
     
-    for (j in 1:(ncol(P) - 1)) {
-      
-      Pdo <- Pdo + ((weights[i, j] * P[i, j]) / (1 - Pdk))
-      
-      Pde <- Pde + ((weights[i, j] * P[i, ncol(P)] * (P[nrow(P), j] - P[nrow(P) - 1, j])) / (1 - Pdk) ^ 2)
-      
-      term1.denom <- term1.denom + weights[i,j] * P[i, ncol(P)] * (P[nrow(P), j] - P[nrow(P) - 1, j])
-    }
-  }
-  
-  Kd <- (Pdo - Pde) / Pde
-  
-  term1.denom <- 4 * term1.denom ^ 2
-  
-  term1.num <- 0
-  
-  for (i in 1:(nrow(P) - 2)) {
+    BI.est <- 1
+    BI.se <- 0
     
-    for (j in 1:(ncol(P) - 1)) {
+  } else {
+  
+    x1 <- addmargins(x)
+  
+    P <- x1 / max(x1)
+  
+    Pdk <- P[nrow(P) - 1, ncol(P)]
+  
+    Pdo <- Pde <- v <- term1.denom <- 0
+  
+    for (i in 1:(nrow(P) - 2)) {
+    
+      for (j in 1:(ncol(P) - 1)) {
       
-      extra <- 0
+        Pdo <- Pdo + ((weights[i, j] * P[i, j]) / (1 - Pdk))
       
-      for (r in 1:(ncol(P) - 1)) {
-        
-        extra <- extra + (weights[r, j] * P[r, ncol(P)] + weights[i, r] * (P[nrow(P), r] - P[nrow(P) - 1, r]))
+        Pde <- Pde + ((weights[i, j] * P[i, ncol(P)] * (P[nrow(P), j] - P[nrow(P) - 1, j])) / (1 - Pdk) ^ 2)
+      
+        term1.denom <- term1.denom + weights[i,j] * P[i, ncol(P)] * (P[nrow(P), j] - P[nrow(P) - 1, j])
       }
-      
-      term1.num <- term1.num + ((P[i, j] * (1 - Pdk) ^ 2 * ((1 - Pdk) * weights[i, j] - (1 + Kd) * extra) ^ 2))
     }
-  }
   
-  v.1 <- term1.num / term1.denom
+    Kd <- (Pdo - Pde) / Pde
   
-  v.2 <- Pdk * (1 - Pdk) - (1 - Pdk) * (1 + Kd) * (Pdk + ((1 - Pdk) * (1 + Kd)) / 4)
+    term1.denom <- 4 * term1.denom ^ 2
   
-  v <- (v.1 + v.2) / x1[nrow(x1), ncol(x1)]
+    term1.num <- 0
+  
+    for (i in 1:(nrow(P) - 2)) {
+    
+      for (j in 1:(ncol(P) - 1)) {
+      
+        extra <- 0
+      
+        for (r in 1:(ncol(P) - 1)) {
+        
+          extra <- extra + (weights[r, j] * P[r, ncol(P)] + weights[i, r] * (P[nrow(P), r] - P[nrow(P) - 1, r]))
+        }
+      
+        term1.num <- term1.num + ((P[i, j] * (1 - Pdk) ^ 2 * ((1 - Pdk) * weights[i, j] - (1 + Kd) * extra) ^ 2))
+      }
+    }
+  
+    v.1 <- term1.num / term1.denom
+  
+    v.2 <- Pdk * (1 - Pdk) - (1 - Pdk) * (1 + Kd) * (Pdk + ((1 - Pdk) * (1 + Kd)) / 4)
+  
+    v <- (v.1 + v.2) / x1[nrow(x1), ncol(x1)]
   
 
-  BI.est <- (1 + Pdk + (1 - Pdk) * Kd) / 2
+    BI.est <- (1 + Pdk + (1 - Pdk) * Kd) / 2
   
-  BI.se <- sqrt(v)
+    BI.se <- sqrt(v)
+  }
 
   if (alternative.J == "two.sided") {
     BI.CI.Lower <- BI.est - (CI.J * BI.se)
